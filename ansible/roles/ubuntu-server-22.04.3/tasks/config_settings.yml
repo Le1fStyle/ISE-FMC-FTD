@@ -1,0 +1,43 @@
+- name: Set hostname
+  hostname: 
+    name: "{{ ubuntu_hostname }}"
+
+- name: Copy vimrc file
+  copy:
+    src: vimrc
+    dest: /etc/vim/vimrc
+
+- name: Copy bashrc file
+  copy:
+    src: bashrc
+    dest: /etc/profile
+  notify:
+  - Source profile
+
+- name: "Copy template /etc/apt/apt.conf"
+  template:
+    src: apt.conf.j2
+    dest: /etc/apt/apt.conf
+  notify:
+  - Source bashrc
+
+- name: "Copy template /etc/environment"
+  template:
+    src: environment.j2
+    dest: /etc/environment
+  notify:
+  - Source bashrc
+  
+- name: "Set timezone {{ ubuntu_timezone }}"
+  timezone:
+    name: "{{ ubuntu_timezone }}"
+
+#- name: "Copy NTP conf {{ centos_ntp_server }}  to /etc/ntp.conf"
+#  template:
+#    src: ntp.conf.j2
+#    dest: /etc/ntp.conf
+#    owner: root
+#    group: wheel
+#    mode: u=r+w,g=r,o=r
+#  notify:
+#  - Restart ntpd

@@ -1,0 +1,13 @@
+---
+- name: Source profile
+  shell: source /etc/profile
+  args:
+    executable: /bin/bash
+
+- name: Restart ntpd
+  service:
+    name: ntpd
+    state: restarted 
+
+- name: Restart OS
+  reboot:

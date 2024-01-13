@@ -1,0 +1,8 @@
+---
+- name: Setup ubuntu server
+  tags: setup_ubuntu
+  hosts: ubuntu_desktop
+  become: yes
+  gather_facts: false
+  roles:
+  - ubuntu-desktop-22.04.3

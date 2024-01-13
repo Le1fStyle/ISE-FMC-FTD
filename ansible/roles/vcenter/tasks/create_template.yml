@@ -1,0 +1,67 @@
+---
+- name: Setup Ubuntu server
+  hosts: localhost
+  gather_facts: no
+  vars:
+    ansible_python_interpreter: /opt/homebrew/bin/python3
+    vcenter:
+      host:                   10.51.71.61
+      user:                   "administrator@hxedge-vcenter.local"
+      pwd:                    "Vielab123!"
+      vmname:                 "LHINTZSC-UBUNTU-SERVER-1"
+      folder:                 "LHINTZSC/ISE-FMC"
+      datacenter:             "DC1"
+      validate_certs:         false
+  module_defaults:
+    vmware_guest_info:
+      hostname:               '{{ vcenter.host }}'
+      username:               '{{ vcenter.user }}'
+      password:               '{{ vcenter.pwd }}'
+      validate_certs:         '{{ vcenter.validate_certs }}'
+      name:                   '{{ vcenter.vmname }}'
+      folder:                 '{{ vcenter.folder }}'
+      datacenter:             '{{ vcenter.datacenter }}'
+    vmware_guest:
+      hostname:               '{{ vcenter.host }}'
+      username:               '{{ vcenter.user }}'
+      password:               '{{ vcenter.pwd }}'
+      validate_certs:         '{{ vcenter.validate_certs }}'
+      name:                   '{{ vcenter.vmname }}'
+      folder:                 '{{ vcenter.folder }}'
+      datacenter:             '{{ vcenter.datacenter }}'
+    vmware.vmware_rest.vcenter_vm_info:
+      vcenter_hostname:       '{{ vcenter.host }}'
+      vcenter_username:       '{{ vcenter.user }}'
+      vcenter_password:       '{{ vcenter.pwd }}'
+      vcenter_validate_certs: '{{ vcenter.validate_certs }}'
+    community.vmware.vmware_guest_sendkey:
+      hostname:               '{{ vcenter.host }}'
+      username:               '{{ vcenter.user }}'
+      password:               '{{ vcenter.pwd }}'
+      validate_certs:         '{{ vcenter.validate_certs }}'
+      name:                   '{{ vcenter.vmname }}'
+      folder:                 '{{ vcenter.folder }}'
+      datacenter:             '{{ vcenter.datacenter }}'
+  tasks:
+
+    - name: Gather basic facts about VM
+      vmware_guest_info:
+      delegate_to: localhost
+      register: vm_facts
+
+    - name: Collect details about VM
+      vmware.vmware_rest.vcenter_vm_info:
+        vm: '{{ vm_facts.instance.moid }}'
+      delegate_to: localhost
+      register: vm_details
+
+    - name: Power off VM
+      vmware_guest:
+        state: poweredoff
+      delegate_to: localhost
+      register: vm_facts
+
+    - name: Template the VM
+      vmware_guest:
+        is_template: true
+      delegate_to: localhost

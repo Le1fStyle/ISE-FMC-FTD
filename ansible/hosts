@@ -1,0 +1,19 @@
+[all:children]
+linux
+windows
+orchestrator
+
+[linux:children]
+ubuntu_desktop
+
+[windows:children]
+windows_server
+
+[windows_server]
+server-1 ansible_host=10.51.71.48
+
+[ubuntu_desktop]
+terminal-1 ansible_host=10.51.71.46
+
+[orchestrator]
+localhost ansible_connection=local

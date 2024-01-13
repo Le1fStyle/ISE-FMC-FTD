@@ -1,0 +1,17 @@
+- name: Install basic ubuntu packages
+  tags: ubuntu_basic
+  apt:
+    pkg:
+      - vim
+      - wget
+      - curl
+      - nmap
+      - traceroute
+      - net-tools
+      - unzip
+      - ubuntu-desktop-minimal
+    update_cache: true
+    state: latest
+  register: result
+  notify:
+  - Restart OS

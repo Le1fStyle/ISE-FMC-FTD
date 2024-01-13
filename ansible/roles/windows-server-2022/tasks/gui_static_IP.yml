@@ -1,0 +1,789 @@
+---
+- name: Setup Windows server
+  hosts: localhost
+  gather_facts: no
+  vars:
+    ansible_python_interpreter: /opt/homebrew/bin/python3
+    vcenter:
+      host:                   "{{ lookup('env','vcenter_host') }}"
+      user:                   "{{ lookup('env','vcenter_user') }}"
+      pwd:                    "{{ lookup('env','vcenter_pwd') }}"
+      vmname:                 "{{ lookup('env','vcenter_vmname') }}"
+      folder:                 "{{ lookup('env','vcenter_folder') }}"
+      datacenter:             "{{ lookup('env','vcenter_datacenter') }}"
+      validate_certs:         "{{ lookup('env','vcenter_validate_certs') }}"
+      iso_controller_type:    "{{ lookup('env','vcenter_iso_controller_type') }}"
+      iso_controller_number:  "{{ lookup('env','vcenter_iso_controller_number') }}"
+      iso_unit_number:        "{{ lookup('env','vcenter_iso_unit_number') }}"
+    network:
+      subnet:                 "{{ lookup('env','network_subnet') }}"
+      address:                "{{ lookup('env','network_address') }}"
+      gateway:                "{{ lookup('env','network_gateway') }}"
+      nameserver:             "{{ lookup('env','network_nameserver') }}"
+      proxy:                  "{{ lookup('env','network_proxy') }}"
+    installer:
+      product_key:            "{{ lookup('env','product_key') }}"
+      hostname:               "{{ lookup('env','installer_hostname') }}"
+      name:                   "{{ lookup('env','installer_name') }}"
+      user:                   "{{ lookup('env','installer_user') }}"
+      pwd:                    "{{ lookup('env','installer_pwd') }}"
+      time:                   "{{ lookup('env','installer_time') }}"
+  module_defaults:
+    vmware_guest_info:
+      hostname:               '{{ vcenter.host }}'
+      username:               '{{ vcenter.user }}'
+      password:               '{{ vcenter.pwd }}'
+      validate_certs:         '{{ vcenter.validate_certs }}'
+      name:                   '{{ vcenter.vmname }}'
+      folder:                 '{{ vcenter.folder }}'
+      datacenter:             '{{ vcenter.datacenter }}'
+    vmware_guest:
+      hostname:               '{{ vcenter.host }}'
+      username:               '{{ vcenter.user }}'
+      password:               '{{ vcenter.pwd }}'
+      validate_certs:         '{{ vcenter.validate_certs }}'
+      name:                   '{{ vcenter.vmname }}'
+      folder:                 '{{ vcenter.folder }}'
+      datacenter:             '{{ vcenter.datacenter }}'
+    vmware.vmware_rest.vcenter_vm_info:
+      vcenter_hostname:       '{{ vcenter.host }}'
+      vcenter_username:       '{{ vcenter.user }}'
+      vcenter_password:       '{{ vcenter.pwd }}'
+      vcenter_validate_certs: '{{ vcenter.validate_certs }}'
+    community.vmware.vmware_guest_sendkey:
+      hostname:               '{{ vcenter.host }}'
+      username:               '{{ vcenter.user }}'
+      password:               '{{ vcenter.pwd }}'
+      validate_certs:         '{{ vcenter.validate_certs }}'
+      name:                   '{{ vcenter.vmname }}'
+      folder:                 '{{ vcenter.folder }}'
+      datacenter:             '{{ vcenter.datacenter }}'
+  tasks:
+
+    - name: Gather basic facts about VM
+      vmware_guest_info:
+      delegate_to: localhost
+      register: vm_facts
+
+    - name: Collect details about VM
+      vmware.vmware_rest.vcenter_vm_info:
+        vm: '{{ vm_facts.instance.moid }}'
+      delegate_to: localhost
+      register: vm_details
+
+    - name: Wait for boot loader
+      ansible.builtin.pause:
+        seconds: 30
+
+    - name: Select language
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - TAB
+          - TAB
+          - TAB
+          - ENTER
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Wait for installer
+      ansible.builtin.pause:
+        seconds: 10
+
+    - name: Enter product key
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: "{{ installer.product_key }}"
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Confirm product key
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Wait for installer
+      ansible.builtin.pause:
+        seconds: 1
+
+    - name: Confirm OS version
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - DOWNARROW
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Wait for installer
+      ansible.builtin.pause:
+        seconds: 3
+
+    - name: Accept terms and conditions
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - SPACE
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Wait for installer
+      ansible.builtin.pause:
+        seconds: 1
+
+    - name: Select installation type
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - TAB
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Select disk
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Wait for installer
+      ansible.builtin.pause:
+        seconds: 240
+
+    - name: Enter password
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: "{{ installer.pwd }}"
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Next line
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - TAB
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Re-enter password
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: "{{ installer.pwd }}"
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Confirm password
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 2
+        keys_send:
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Wait for installer
+      ansible.builtin.pause:
+        seconds: 90
+
+    - name: Unlock screen
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 2
+        keys_send:
+          - CTRL_ALT_DEL
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Wait to load
+      ansible.builtin.pause:
+        seconds: 3
+
+    - name: Send admin password
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: "{{ installer.pwd }}"
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter password
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 2
+        keys_send:
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Wait to load
+      ansible.builtin.pause:
+        seconds: 15
+
+    - name: Allow network discovery
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Wait to load
+      ansible.builtin.pause:
+        seconds: 3
+
+    - name: Try windows key
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        keys_send:
+          - WINDOWS
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Wait to load
+      ansible.builtin.pause:
+        seconds: 3
+
+    - name: Send powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: "powershell"
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Wait to load
+      ansible.builtin.pause:
+        seconds: 3
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Disable notifications step 1
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          New-Item 
+          -Path "HKCU:\Software\Policies\Microsoft\Windows" 
+          -Name "Explorer" 
+          -force
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Disable notifications step 2
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          New-ItemProperty 
+          -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" 
+          -Name "DisableNotificationCenter" 
+          -PropertyType "DWord" 
+          -Value 1
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Disable notifications step 3
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          New-ItemProperty 
+          -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications" 
+          -Name "ToastEnabled" 
+          -PropertyType "DWord" 
+          -Value 0
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Get adapter
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: '$adapter = Get-NetAdapter | ? {$_.Status -eq "up"}'
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Remove exsint IP
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          If (( $adapter | Get-NetIPConfiguration).IPv4Address.IPAddress ){
+          $adapter | Remove-NetIPAddress
+          -AddressFamily IPv4
+          -Confirm:$false
+          }
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Remove existing gateway
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          If ( ($adapter | Get-NetIPConfiguration).Ipv4DefaultGateway ) {
+          $adapter | Remove-NetRoute
+          -AddressFamily IPv4
+          -Confirm:$false
+          }
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Set IP, netmask and gateway
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          $adapter | New-NetIPAddress 
+          -AddressFamily IPv4 
+          -IPAddress {{ network.address }} 
+          -PrefixLength {{ network.subnet[-2:] }} 
+          -DefaultGateway {{ network.gateway }}
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Wait to load
+      ansible.builtin.pause:
+        seconds: 5
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: DNS sever
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          $adapter | Set-DnsClientServerAddress 
+          -ServerAddresses {{ network.nameserver | replace('[','(') | replace(']',')') }}
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enable proxy
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          Set-ItemProperty 
+          -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings" 
+          -Name ProxyEnable -Value 1
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: Set proxy server
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          Set-ItemProperty 
+          -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings" 
+          -Name ProxyServer 
+          -Value {{ network.proxy | replace("https://","") | replace("http://","") }}
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: Allow ICMP ping v4
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          New-NetFirewallRule 
+          -DisplayName "ICMP Allow Ping V4" 
+          -Direction Inbound 
+          -Protocol ICMPv4 
+          -IcmpType 8  
+          -Action Allow
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: Enable server mgt remoting
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          Configure-SMRemoting.exe
+          -enable
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: Enable WINRM
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          Enable-PSRemoting
+          -SkipNetworkProfileCheck
+          -Force
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: Open WINRM port 5986 for Windows Remote Mgt
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          New-NetFirewallRule
+          -DisplayName "Windows Remote Management (HTTPS-In)"
+          -Name "Windows Remote Management (HTTPS-In)"
+          -Profile Any
+          -LocalPort 5986
+          -Protocol TCP
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: Open WINRM port 5985 for Windows Remote Mgt
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          New-NetFirewallRule
+          -DisplayName "Windows Remote Management (HTTP-In)"
+          -Name "Windows Remote Management (HTTP-In)"
+          -Profile Any
+          -LocalPort 5985
+          -Protocol TCP
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: Open WINRM ports for RemotePowerShell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          New-NetFirewallRule
+          -DisplayName "RemotePowerShell"
+          -Direction Inbound
+          -LocalPort 5985-5986
+          -Protocol TCP
+          -Action Allow
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: Enable basic WINRM authentication
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          Set-Item
+          -Path WSMan:\localhost\Service\Auth\Basic
+          -Value $true
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: Enable cert WINRM authentication
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          Set-Item
+          -Path WSMan:\localhost\Service\Auth\Certificate
+          -Value $true
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: WINRM allow unencrypted auth
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          winrm set winrm/config/client '@{AllowUnencrypted ="true"}'
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: WINRM allow unencrypted auth
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          winrm set winrm/config/service '@{AllowUnencrypted ="true"}'
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: Get hostname
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          $hostname=hostname.exe;
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: Get self signed cert
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          $cert=New-SelfSignedCertificate
+          -dnsname $hostname
+          -CertStoreLocation 'Cert:\LocalMachine\My';
+          $cert=$cert.Thumbprint
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    # {{ to escape { in powershell and
+    # {{ '{{' }} to escape {{ in ansible
+    # {{ '`"' }} to escape " in powershell
+    - name: WINRM create HTTPS listener
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          $cmd="winrm create winrm/config/Listener?Address=*+Transport=HTTPS
+          '@{{ '{{' }}
+          Hostname= {{ '`"'}}{0}{{ '`"'}}; 
+          CertificateThumbprint={{ '`"'}}{1}{{ '`"'}}
+          {{ '}}' }}'"
+          -f $hostname, $cert; 
+          Invoke-Expression $cmd
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: Set trusted hosts
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          Set-Item wsman:\localhost\client\trustedhosts * -Force
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: Set delegation of credentials
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          Enable-WSManCredSSP -Role Server -Force
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: WINRM restart
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          Restart-Service winrm
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: Shutdown windows
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: >-
+          Stop-Computer -ComputerName localhost
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter powershell
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+
+    - name: Wait for boot loader
+      ansible.builtin.pause:
+        seconds: 10
+
+    - name: Remove cdrom ISO
+      vmware_guest:
+        cdrom: 
+          - type: none
+            controller_type:    '{{ vcenter.iso_controller_type }}'
+            controller_number:  '{{ vcenter.iso_controller_number }}'
+            unit_number:        '{{ vcenter.iso_unit_number }}'
+            state: present
+      delegate_to: localhost
+      register: vm_facts
+
+    - name: Power on VM
+      vmware_guest:
+        state: poweredon
+      delegate_to: localhost
+      register: vm_facts
+
+#    - name: show certs
+#      community.vmware.vmware_guest_sendkey:
+#        sleep_time: 0
+#        string_send: >-
+#          Get-ChildItem Cert:\LocalMachine\My
+#      delegate_to: localhost
+#      register: keys_num_sent
+#
+#    - name: Enter powershell
+#      community.vmware.vmware_guest_sendkey:
+#        sleep_time: 1
+#        keys_send:
+#          - ENTER
+#
+#    - name: show winrm services
+#      community.vmware.vmware_guest_sendkey:
+#        sleep_time: 0
+#        string_send: >-
+#          winrm enumerate winrm/config/listener
+#      delegate_to: localhost
+#      register: keys_num_sent
+#
+#    - name: Enter powershell
+#      community.vmware.vmware_guest_sendkey:
+#        sleep_time: 1
+#        keys_send:
+#          - ENTER

@@ -1,0 +1,314 @@
+---
+- name: Setup Ubuntu server
+  hosts: localhost
+  gather_facts: no
+  vars:
+    ansible_python_interpreter: /opt/homebrew/bin/python3
+    vcenter:
+      host:                   "{{ lookup('env','vcenter_host') }}"
+      user:                   "{{ lookup('env','vcenter_user') }}"
+      pwd:                    "{{ lookup('env','vcenter_pwd') }}"
+      vmname:                 "{{ lookup('env','vcenter_vmname') }}"
+      folder:                 "{{ lookup('env','vcenter_folder') }}"
+      datacenter:             "{{ lookup('env','vcenter_datacenter') }}"
+      validate_certs:         "{{ lookup('env','vcenter_validate_certs') }}"
+      iso_controller_type:    "{{ lookup('env','vcenter_iso_controller_type') }}"
+      iso_controller_number:  "{{ lookup('env','vcenter_iso_controller_number') }}"
+      iso_unit_number:        "{{ lookup('env','vcenter_iso_unit_number') }}"
+    network:
+      subnet:                 "{{ lookup('env','network_subnet') }}"
+      address:                "{{ lookup('env','network_address') }}"
+      gateway:                "{{ lookup('env','network_gateway') }}"
+      nameserver:             "{{ lookup('env','network_nameserver') }}"
+      proxy:                  "{{ lookup('env','network_proxy') }}"
+    installer:
+      hostname:               "{{ lookup('env','installer_hostname') }}"
+      name:                   "{{ lookup('env','installer_name') }}"
+      user:                   "{{ lookup('env','installer_user') }}"
+      pwd:                    "{{ lookup('env','installer_pwd') }}"
+      time:                   "{{ lookup('env','installer_time') }}"
+  module_defaults:
+    vmware_guest_info:
+      hostname:               '{{ vcenter.host }}'
+      username:               '{{ vcenter.user }}'
+      password:               '{{ vcenter.pwd }}'
+      validate_certs:         '{{ vcenter.validate_certs }}'
+      name:                   '{{ vcenter.vmname }}'
+      folder:                 '{{ vcenter.folder }}'
+      datacenter:             '{{ vcenter.datacenter }}'
+    vmware_guest:
+      hostname:               '{{ vcenter.host }}'
+      username:               '{{ vcenter.user }}'
+      password:               '{{ vcenter.pwd }}'
+      validate_certs:         '{{ vcenter.validate_certs }}'
+      name:                   '{{ vcenter.vmname }}'
+      folder:                 '{{ vcenter.folder }}'
+      datacenter:             '{{ vcenter.datacenter }}'
+    vmware.vmware_rest.vcenter_vm_info:
+      vcenter_hostname:       '{{ vcenter.host }}'
+      vcenter_username:       '{{ vcenter.user }}'
+      vcenter_password:       '{{ vcenter.pwd }}'
+      vcenter_validate_certs: '{{ vcenter.validate_certs }}'
+    community.vmware.vmware_guest_sendkey:
+      hostname:               '{{ vcenter.host }}'
+      username:               '{{ vcenter.user }}'
+      password:               '{{ vcenter.pwd }}'
+      validate_certs:         '{{ vcenter.validate_certs }}'
+      name:                   '{{ vcenter.vmname }}'
+      folder:                 '{{ vcenter.folder }}'
+      datacenter:             '{{ vcenter.datacenter }}'
+  tasks:
+
+    - name: Gather basic facts about VM
+      vmware_guest_info:
+      delegate_to: localhost
+      register: vm_facts
+
+    - name: Collect details about VM
+      vmware.vmware_rest.vcenter_vm_info:
+        vm: '{{ vm_facts.instance.moid }}'
+      delegate_to: localhost
+      register: vm_details
+
+    - name: Wait for boot loader
+      ansible.builtin.pause:
+        seconds: 10
+
+    - name: Enter boot loader option
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Wait for init process
+      ansible.builtin.pause:
+        seconds: 80
+
+    - name: Enter language and type of installation
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+          - ENTER
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Select manual IPv4 config
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - UPARROW
+          - UPARROW
+          - ENTER
+          - DOWNARROW
+          - DOWNARROW
+          - ENTER
+          - ENTER
+          - DOWNARROW
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter IP subnet xx.xx.xx.xx/yy
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        keys_send:
+          - DOWNARROW
+        string_send: "{{ network.subnet }}"
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter IP address xx.xx.xx.xx
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        keys_send:
+          - DOWNARROW
+        string_send: "{{ network.address }}"
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter IP gateway xx.xx.xx.xx
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        validate_certs: False
+        keys_send:
+          - DOWNARROW
+        string_send: "{{ network.gateway }}"
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter nameserver A,B,C
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        keys_send:
+          - DOWNARROW
+        string_send: "{{ network.nameserver | join(',') | replace(\"'\",'') }}"
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Handle networking screens
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - DOWNARROW
+          - DOWNARROW
+          - ENTER
+          - DOWNARROW
+          - DOWNARROW
+          - ENTER
+          - UPARROW
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter proxy
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: "{{ network.proxy }}"
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Leave proxy screen
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - DOWNARROW
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Handle standard screens
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - ENTER
+          - DOWNARROW
+          - ENTER
+          - ENTER
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - ENTER
+          - ENTER
+          - DOWNARROW
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter username
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        string_send: "{{ installer.name }}"
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter servername
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        keys_send:
+          - DOWNARROW
+        string_send: "{{ installer.hostname }}"
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter username
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        keys_send:
+          - DOWNARROW
+        string_send: "{{ installer.user }}"
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter password
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        keys_send:
+          - DOWNARROW
+        string_send: "{{ installer.pwd }}"
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Enter password again
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        keys_send:
+          - DOWNARROW
+        string_send: "{{ installer.pwd }}"
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Handle screens and activate SSH
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 1
+        keys_send:
+          - DOWNARROW
+          - ENTER
+          - ENTER
+          - ENTER
+          - DOWNARROW
+          - DOWNARROW
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: Skip feature server selection
+      community.vmware.vmware_guest_sendkey:
+        sleep_time: 0
+        keys_send:
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - DOWNARROW
+          - ENTER
+      delegate_to: localhost
+      register: keys_num_sent
+
+    - name: "Wait {{ installer.time}} min for installation to complete"
+      ansible.builtin.pause:
+        minutes: '{{ installer.time}}'
+
+    - name: Power off VM
+      vmware_guest:
+        state: poweredoff
+      delegate_to: localhost
+      register: vm_facts
+
+    - name: Remove cdrom ISO
+      vmware_guest:
+        cdrom: 
+          - type: none
+            controller_type:    '{{ vcenter.iso_controller_type }}'
+            controller_number:  '{{ vcenter.iso_controller_number }}'
+            unit_number:        '{{ vcenter.iso_unit_number }}'
+            state: present
+      delegate_to: localhost
+      register: vm_facts
+
+    - name: Power on VM
+      vmware_guest:
+        state: poweredon
+      delegate_to: localhost
+      register: vm_facts
