@@ -24,7 +24,7 @@
     installer:
       product_key:            "{{ lookup('env','product_key') }}"
       hostname:               "{{ lookup('env','installer_hostname') }}"
-      name:                   "{{ lookup('env','installer_name') }}"
+      name:                   "{{ lookup('env','installer_username') }}"
       user:                   "{{ lookup('env','installer_user') }}"
       pwd:                    "{{ lookup('env','installer_pwd') }}"
       time:                   "{{ lookup('env','installer_time') }}"

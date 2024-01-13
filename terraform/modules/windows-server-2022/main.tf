@@ -41,26 +41,26 @@ resource "vsphere_virtual_machine" "windows-server" {
     command="ansible-playbook ./roles/windows-server-2022/tasks/gui_static_IP.yml"
     environment = {
       vcenter_host                  = var.vcenter_host
-      vcenter_user                  = "administrator@hxedge-vcenter.local"
+      vcenter_user                  = var.vcenter_user
       vcenter_pwd                   = var.vcenter_pwd
       vcenter_vmname                = var.vcenter_vmname
       vcenter_folder                = var.vcenter_folder
-      vcenter_datacenter            = "DC1" 
+      vcenter_datacenter            = var.vcenter_datacenter
       vcenter_iso_controller_type   = "ide"
       vcenter_iso_controller_number = 0
       vcenter_iso_unit_number       = 0
       vcenter_validate_certs        = false
-      network_subnet                = var.network_subnet
       network_address               = var.network_address
-      network_gateway               = "10.51.71.254"
+      network_subnet                = var.network_subnet
+      network_gateway               = var.network_gateway
+      network_proxy                 = var.network_proxy
       network_nameserver            = jsonencode(var.network_nameserver)
-      network_proxy                 = "http://proxy.esl.cisco.com:80"
       installer_hostname            = var.installer_hostname
-      installer_name                = "Leif Eric Hintzsche"
-      installer_user                = "lhintzsc"
+      installer_username            = var.installer_username
+      installer_usr                 = var.installer_usr
       installer_pwd                 = var.installer_pwd
       installer_time                = 30
-      product_key                   = "GHKN6-MXYKV-8H8FJ-GWM4K-T86K8"
+      product_key                   = var.installer_product_key
     }
   }
 

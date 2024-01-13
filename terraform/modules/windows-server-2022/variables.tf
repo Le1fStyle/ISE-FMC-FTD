@@ -1,7 +1,6 @@
 variable "iso" {
   description = "ISO file as data source to create the desktop"
   type        = string
-  default     = "ISO-Templates/en-us_windows_server_2022_updated_feb_2022_x64_dvd_d4a089c1.iso"
 }
 
 variable "datastore_vms_id" {
@@ -33,37 +32,31 @@ variable "tags" {
 variable "vcenter_host" {
   description = "Host of vCenter is needed for ansible connection"
   type = string
-  default = "10.51.71.61"
 }
 
 variable "vcenter_user" {
   description = "User of vCenter is needed for ansible connection"
   type = string
-  default = "administrator@hxedge-vcenter.local"
 }
 
 variable "vcenter_pwd" {
   description = "Password for vCenter is needed for ansible connection"
   type = string
-  default = "Vielab123!"
 }
 
 variable "vcenter_datacenter" {
-  description = "Password for vCenter is needed for ansible connection"
+  description = "vCenter data center name"
   type = string
-  default = "Vielab123!"
 }
 
 variable "vcenter_folder" {
   description = "Folder where the desktop servers are generated"
   type        = string
-  default     = "LHINTZSC/ISE-FMC/" 
 }
 
 variable "vcenter_vmname" {
   description = "Name of the ubuntu desktop server"
   type        = string
-  default     = "LHINTZSC-UBUNTU-SERVER-1" 
 }
 
 variable "vcenter_validate_certs" {
@@ -93,65 +86,55 @@ variable "vcenter_iso_unit_number" {
 variable "network_subnet" {
   description = "subnet"
   type        = string
-  default     = "10.51.71.0/24"
 }
 
 variable "network_address" {
   description = "IPv4 address"
   type        = string
-  default     = "10.51.71.46"
 }
 
 variable "network_gateway" {
   description = "gateway"
   type        = string
-  default     = "10.51.71.254"
 }
 
 variable "network_nameserver" {
   description = "list of nameserver"
   type        = list(string)
-  default     = ["144.254.71.184","171.70.168.183","64.104.123.144"]
 }
 
 variable "network_proxy" {
   description = "proxy"
   type        = string
-  default     = "http://proxy.esl.cisco.com:80"
-}
-
-variable "path_ansible" {
-  description = "ansible path"
-  type        = string
-  default     = ""
 }
 
 variable "installer_hostname" {
   description = "simple hostname for login"
   type        = string
-  default     = "terminal1"
 }
 
 variable "installer_username" {
-  description = "full username"
+  description = "full name for windows installer"
   type        = string
-  default     = "Leif Eric Hintzsche"
 }
 
-variable "installer_user" {
+variable "installer_usr" {
   description = "username for login"
   type        = string
-  default     = "lhintzsc"
 }
 
 variable "installer_pwd" {
   description = "password for login"
   type        = string
-  default     = "Vielab123!"
 }
 
 variable "installer_time" {
   description = "waiting time in minutes for the installation"
   type        = number
   default     = 30
+}
+
+variable "installer_product_key" {
+  description = "product key for win server 2022"
+  type        = number
 }
