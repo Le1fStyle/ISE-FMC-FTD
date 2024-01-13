@@ -1,5 +1,7 @@
-ansible_user:     "{{ lookup('env','ANSIBLE_WINDOWS_USR') }}"
-ansible_password: "{{ lookup('env','ANSIBLE_WINDOWS_PWD') }}"
+---
+# file: group_vars/windows_server
+ansible_user:     "{{ lookup('env','TF_INSTALLER_USR') }}"
+ansible_password: "{{ lookup('env','TF_INSTALLER_PWD') }}"
 ansible_connection: winrm
 ansible_winrm_transport: basic
 ansible_winrm_scheme: https

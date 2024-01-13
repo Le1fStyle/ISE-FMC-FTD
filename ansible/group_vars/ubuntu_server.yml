@@ -1,9 +1,8 @@
 ---
-# file: group_vars/all
+# file: group_vars/ubuntu_server
 ansible_connection:     ssh 
-ansible_ssh_user:       "{{ lookup('env','ANSIBLE_LINUX_SSH_USR') }}"
-ansible_ssh_pass:       "{{ lookup('env','ANSIBLE_LINUX_SSH_PWD') }}"
+ansible_ssh_user:       "{{ lookup('env','TF_INSTALLER_USR') }}"
+ansible_ssh_pass:       "{{ lookup('env','TF_INSTALLER_PWD') }}"
 ansible_become:         yes
 ansible_become_method:  sudo 
-ansible_become_pass:    "{{ lookup('env','ANSIBLE_LINUX_SSH_PWD') }}"
-
+ansible_become_pass:    "{{ lookup('env','TF_INSTALLER_USR') }}"
