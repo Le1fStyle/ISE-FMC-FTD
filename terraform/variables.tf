@@ -8,16 +8,13 @@ variable "NETWORK_ADDRESS_1" {}
 variable "NETWORK_ADDRESS_2" {}
 variable "NETWORK_ADDRESS_3" {}
 variable "NETWORK_ADDRESS_4" {}
-variable "INSTALLER_USERNAME" {}
-variable "INSTALLER_USR" {}
-variable "INSTALLER_PWD" {}
-variable "INSTALLER_PRODUCT_KEY" {}
-
-variable "vmware_provider_version"{
-  description = "Version of vmware provider"
-  type        = string
-  default     = "2.6.1"
-}
+variable "WINDOWS_USERNAME" {}
+variable "WINDOWS_USR" {}
+variable "WINDOWS_PWD" {}
+variable "WINDOWS_PRODUCT_KEY" {}
+variable "LINUX_USERNAME" {}
+variable "LINUX_USR" {}
+variable "LINUX_PWD" {}
 
 variable "datacenter" {
   description = "Name of datacenter"

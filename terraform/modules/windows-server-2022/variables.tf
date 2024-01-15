@@ -136,5 +136,5 @@ variable "installer_time" {
 
 variable "installer_product_key" {
   description = "product key for win server 2022"
-  type        = number
+  type        = string
 }

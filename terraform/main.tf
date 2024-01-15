@@ -2,7 +2,7 @@ terraform {
   required_providers {
     vsphere = {
       source  = "hashicorp/vsphere"
-      version = var.vmware_provider_version
+      version = "2.6.1"
     }
   }
 }
@@ -85,14 +85,14 @@ module "module_ubuntu-server-1" {
  network_nameserver   = var.network_nameserver
 
  installer_hostname   = "terminal-1"
- installer_username   = var.INSTALLER_USERNAME
- installer_usr        = var.INSTALLER_USR
- installer_pwd        = var.INSTALLER_PWD
+ installer_username   = var.LINUX_USERNAME
+ installer_usr        = var.LINUX_USR
+ installer_pwd        = var.LINUX_PWD
  
  datastore_vms_id  = data.vsphere_datastore.vms.id
- datastore_iso_id = data.vsphere_datastore.iso.id
- resource_pool_id = vsphere_resource_pool.mypool.id
- network_id       = data.vsphere_network.network.id
+ datastore_iso_id  = data.vsphere_datastore.iso.id
+ resource_pool_id  = vsphere_resource_pool.mypool.id
+ network_id        = data.vsphere_network.network.id
 }
 
 # windows server 1
@@ -115,10 +115,10 @@ module "module_windows-server-1" {
  network_nameserver   = var.network_nameserver
 
  installer_hostname   = "windows-1"
- installer_username   = var.INSTALLER_USERNAME
- installer_usr        = var.INSTALLER_USR
- installer_pwd        = var.INSTALLER_PWD
- installer_product_key= var.INSTALLER_PRODUCT_KEY
+ installer_username   = var.WINDOWS_USERNAME
+ installer_usr        = var.WINDOWS_USR
+ installer_pwd        = var.WINDOWS_PWD
+ installer_product_key= var.WINDOWS_PRODUCT_KEY
  
  datastore_vms_id     = data.vsphere_datastore.vms.id
  datastore_iso_id     = data.vsphere_datastore.iso.id

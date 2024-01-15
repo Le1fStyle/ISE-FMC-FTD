@@ -741,7 +741,7 @@
 
     - name: Wait for boot loader
       ansible.builtin.pause:
-        seconds: 10
+        seconds: 30
 
     - name: Remove cdrom ISO
       vmware_guest:
@@ -753,6 +753,10 @@
             state: present
       delegate_to: localhost
       register: vm_facts
+
+    - name: Wait 3 seconds
+      ansible.builtin.pause:
+        seconds: 3
 
     - name: Power on VM
       vmware_guest:
