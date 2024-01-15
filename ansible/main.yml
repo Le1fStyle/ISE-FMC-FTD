@@ -1,8 +1,7 @@
 ---
-- name: Setup ubuntu server
-  tags: setup_ubuntu
-  hosts: ubuntu_desktop
-  become: yes
+- name: Setup windows server
+  tags: setup_windows
+  hosts: windows_server
   gather_facts: false
   roles:
-  - ubuntu-desktop-22.04.3
+  - windows-server-2022

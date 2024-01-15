@@ -1,0 +1,9 @@
+- name: Set dns server on all visible adapters
+  ansible.windows.win_dns_client:
+    adapter_names: '*'
+    dns_servers:
+    - "144.254.71.184"
+    - "171.70.168.183"
+    - "64.104.123.144"
+    - "10.51.71.48"
+    log_path: C:\dns_log.txt
