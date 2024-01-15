@@ -79,5 +79,5 @@ variable "windows_iso" {
 variable "linux_iso" {
   description = "ISO file as data source to create ubuntu server"
   type        = string
-  default     = "ISO-Templates/en-us_windows_server_2022_updated_feb_2022_x64_dvd_d4a089c1.iso"
+  default     = "ISO-Templates/ubuntu-22.04.3-live-server-amd64.iso"
 }
