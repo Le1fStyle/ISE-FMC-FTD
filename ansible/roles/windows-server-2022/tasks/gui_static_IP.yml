@@ -764,6 +764,11 @@
       delegate_to: localhost
       register: vm_facts
 
+    - name: Wait for reboot
+      ansible.builtin.pause:
+        seconds: 60
+
+
 #    - name: show certs
 #      community.vmware.vmware_guest_sendkey:
 #        sleep_time: 0
