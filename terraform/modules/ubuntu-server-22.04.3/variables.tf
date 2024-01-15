@@ -132,6 +132,6 @@ variable "installer_pwd" {
 variable "installer_time" {
   description = "waiting time in minutes for the installation"
   type        = number
-  default     = 30
+  default     = 18
 }
 

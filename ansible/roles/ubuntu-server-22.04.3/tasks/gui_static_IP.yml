@@ -72,7 +72,7 @@
 
     - name: Wait for boot loader
       ansible.builtin.pause:
-        seconds: 10
+        seconds: 20
 
     - name: Enter boot loader option
       community.vmware.vmware_guest_sendkey:
