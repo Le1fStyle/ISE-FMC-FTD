@@ -1,13 +1,13 @@
 - name: Create database server record
   community.windows.win_dns_record:
-    name: "dns.vielab.local"
+    name: "ad-dns"
     type: "A"
-    value: "10.51.71.49"
+    value: "10.51.71.48"
     zone: "vielab.local"
 
 - name: Create database server record
   community.windows.win_dns_record:
-    name: "ubuntu-1.vielab.local"
+    name: "ubuntu-1"
     type: "A"
     value: "10.51.71.46"
     zone: "vielab.local"

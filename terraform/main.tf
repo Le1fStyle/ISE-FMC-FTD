@@ -66,12 +66,13 @@ resource "vsphere_folder" "ise-fmc" {
   datacenter_id = "${data.vsphere_datacenter.dc.id}"
 }
 
-# ubuntu server 1
-module "module_ubuntu-server-1" {
- source               = "./modules/ubuntu-server-22.04.3"
- iso                  = var.linux_iso
+# windows AD and DNS server
+module "module_ad_dns" {
 
- vcenter_vmname       = "LHINTZSC-UBUNTU-SERVER-1"
+ source               = "./modules/windows-server-2022"
+ iso                  = var.windows_iso
+
+ vcenter_vmname       = "LHINTZSC-AD-DNS"
  vcenter_datacenter   = var.datacenter
  vcenter_folder       = vsphere_folder.ise-fmc.path
  vcenter_host         = var.VCENTER_HOST
@@ -84,37 +85,7 @@ module "module_ubuntu-server-1" {
  network_gateway      = var.NETWORK_GATEWAY
  network_nameserver   = var.network_nameserver
 
- installer_hostname   = "terminal-1"
- installer_username   = var.LINUX_USERNAME
- installer_usr        = var.LINUX_USR
- installer_pwd        = var.LINUX_PWD
- 
- datastore_vms_id  = data.vsphere_datastore.vms.id
- datastore_iso_id  = data.vsphere_datastore.iso.id
- resource_pool_id  = vsphere_resource_pool.mypool.id
- network_id        = data.vsphere_network.network.id
-}
-
-# windows server 1
-module "module_windows-server-1" {
-
- source               = "./modules/windows-server-2022"
- iso                  = var.windows_iso
-
- vcenter_vmname       = "LHINTZSC-WINDOWS-SERVER-1"
- vcenter_datacenter   = var.datacenter
- vcenter_folder       = vsphere_folder.ise-fmc.path
- vcenter_host         = var.VCENTER_HOST
- vcenter_user         = var.VCENTER_USER
- vcenter_pwd          = var.VCENTER_PASSWORD
-
- network_address      = var.NETWORK_ADDRESS_3
- network_subnet       = var.NETWORK_SUBNET
- network_proxy        = var.NETWORK_PROXY
- network_gateway      = var.NETWORK_GATEWAY
- network_nameserver   = var.network_nameserver
-
- installer_hostname   = "windows-1"
+ installer_hostname   = "ad-dns"
  installer_username   = var.WINDOWS_USERNAME
  installer_usr        = var.WINDOWS_USR
  installer_pwd        = var.WINDOWS_PWD
@@ -125,4 +96,33 @@ module "module_windows-server-1" {
  resource_pool_id     = vsphere_resource_pool.mypool.id
  network_id           = data.vsphere_network.network.id
  
+}
+
+# ubuntu server
+module "module_ubuntu-server" {
+ source               = "./modules/ubuntu-server-22.04.3"
+ iso                  = var.linux_iso
+
+ vcenter_vmname       = "LHINTZSC-UBUNTU-SERVER"
+ vcenter_datacenter   = var.datacenter
+ vcenter_folder       = vsphere_folder.ise-fmc.path
+ vcenter_host         = var.VCENTER_HOST
+ vcenter_user         = var.VCENTER_USER
+ vcenter_pwd          = var.VCENTER_PASSWORD
+
+ network_address      = var.NETWORK_ADDRESS_2
+ network_subnet       = var.NETWORK_SUBNET
+ network_proxy        = var.NETWORK_PROXY
+ network_gateway      = var.NETWORK_GATEWAY
+ network_nameserver   = var.network_nameserver
+
+ installer_hostname   = "ubuntu-1"
+ installer_username   = var.LINUX_USERNAME
+ installer_usr        = var.LINUX_USR
+ installer_pwd        = var.LINUX_PWD
+ 
+ datastore_vms_id  = data.vsphere_datastore.vms.id
+ datastore_iso_id  = data.vsphere_datastore.iso.id
+ resource_pool_id  = vsphere_resource_pool.mypool.id
+ network_id        = data.vsphere_network.network.id
 }
