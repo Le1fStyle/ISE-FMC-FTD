@@ -1,10 +1,10 @@
 - block:
   - include_tasks: install_from_iso.yml
   module_defaults:
-    vmware_guest_info: "{{ input.module_defaults.vmware_guest_info }}"
-    vmware_guest: "{{ input.module_defaults.vmware_guest }}"
-    vmware.vmware_rest.vcenter_vm_info: "{{ input.module_defaults.vcenter_vm_info }}"
-    community.vmware.vmware_guest_sendkey: "{{ input.module_defaults.vmware_guest_sendkey }}"
+    vmware_guest_info: "{{ input_module_defaults.vmware_guest_info }}"
+    vmware_guest: "{{ input_module_defaults.vmware_guest }}"
+    vmware.vmware_rest.vcenter_vm_info: "{{ input_module_defaults.vcenter_vm_info }}"
+    community.vmware.vmware_guest_sendkey: "{{ input_module_defaults.vmware_guest_sendkey }}"
   when: windows_from_iso == true
 
 - include_tasks: install_active_directory.yml
