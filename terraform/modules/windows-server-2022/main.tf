@@ -38,7 +38,7 @@ resource "vsphere_virtual_machine" "windows-server" {
 
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command="ansible-playbook ./roles/windows-server-2022/tasks/gui_static_IP.yml"
+    command="ansible-playbook ./main.yml --tags terraform_windows_ad_dns"
     environment = {
       vcenter_host                  = var.vcenter_host
       vcenter_user                  = var.vcenter_user

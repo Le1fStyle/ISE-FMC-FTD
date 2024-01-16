@@ -10,11 +10,10 @@ ubuntu_desktop
 windows_server
 
 [windows_server]
-server-1 ansible_host="{{ lookup('env','TF_VAR_NETWORK_ADDRESS_3') }}"
-
+windows_ad_dns ansible_host="{{ lookup('env','TF_VAR_NETWORK_ADDRESS_1') }}"
 
 [ubuntu_desktop]
-terminal-1 ansible_host="{{ lookup('env','TF_VAR_NETWORK_ADDRESS_1') }}"
+ubuntu_1       ansible_host="{{ lookup('env','TF_VAR_NETWORK_ADDRESS_2') }}"
 
 [orchestrator]
 localhost ansible_connection=local

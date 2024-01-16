@@ -8,8 +8,8 @@
 
 - name: Create new forest
   win_domain:
-    dns_domain_name: vielab.local
-    safe_mode_password: Vielab123!
+    dns_domain_name: "{{ ad.domain }}"
+    safe_mode_password: "{{ ad.pwd }}"
   register: result
 
 - name: Reboot after creation

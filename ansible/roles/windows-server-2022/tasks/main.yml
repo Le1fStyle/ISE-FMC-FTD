@@ -1,3 +1,17 @@
+- block:
+  - include_tasks: install_from_iso.yml
+  module_defaults:
+    vmware_guest_info: "{{ input.module_defaults.vmware_guest_info }}"
+    vmware_guest: "{{ input.module_defaults.vmware_guest }}"
+    vmware.vmware_rest.vcenter_vm_info: "{{ input.module_defaults.vcenter_vm_info }}"
+    community.vmware.vmware_guest_sendkey: "{{ input.module_defaults.vmware_guest_sendkey }}"
+  when: windows_from_iso == true
+
 - include_tasks: install_active_directory.yml
+  when: windows_ad_server == true
+
 - include_tasks: configure_dns_records.yml
+  when: windows_dns_server == true
+
 - include_tasks: add_dns_server.yml
+  when: windows_dns_server == true

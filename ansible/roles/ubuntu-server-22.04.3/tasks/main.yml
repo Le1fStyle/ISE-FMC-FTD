@@ -1,4 +1,14 @@
-#- include_tasks: print_vars.yml
+- include_tasks: print_vars.yml
+
+- block:
+  - include_tasks: install_from_iso.yml
+  module_defaults:
+    vmware_guest_info: "{{ input_module_defaults.vmware_guest_info }}"
+    vmware_guest: "{{ input_module_defaults.vmware_guest }}"
+    vmware.vmware_rest.vcenter_vm_info: "{{ input_module_defaults.vcenter_vm_info }}"
+    community.vmware.vmware_guest_sendkey: "{{ input_module_defaults.vmware_guest_sendkey }}"
+  when: ubuntu_from_iso == true
+
 - include_tasks: config_settings.yml
 - include_tasks: install_packages.yml
 

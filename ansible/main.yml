@@ -1,7 +1,20 @@
 ---
-- name: Setup windows server
-  tags: setup_windows
-  hosts: windows_server
+- name: Setup windows AD and DNS server
+  tags: terraform_windows_ad_dns
+  hosts: "{{ variable_host | default('windows_ad_dns') }}"
   gather_facts: false
   roles:
-  - windows-server-2022
+  - role: windows-server-2022
+    vars:
+      windows_from_iso:   true
+      windows_ad_server:  true
+      windows_dns_server: true
+
+- name: Setup ubuntu server
+  tags: terraform_ubuntu_server
+  hosts: "{{ variable_host | default('ubuntu_1') }}"
+  gather_facts: false
+  roles:
+  - role: ubuntu-server-22.04.3
+    vars:
+      ubuntu_from_iso:   true

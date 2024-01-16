@@ -38,7 +38,7 @@ resource "vsphere_virtual_machine" "ubuntu-server" {
 
   provisioner "local-exec" {
     working_dir = "../ansible/"
-    command="ansible-playbook ./roles/ubuntu-server-22.04.3/tasks/gui_static_IP.yml"
+    command="ansible-playbook main.yml --tags terraform_ubuntu_server"
     environment = {
       vcenter_host                  = var.vcenter_host
       vcenter_user                  = var.vcenter_user

@@ -99,11 +99,11 @@ module "module_ad_dns" {
 }
 
 # ubuntu server
-module "module_ubuntu-server" {
+module "module_ubuntu_server" {
  source               = "./modules/ubuntu-server-22.04.3"
  iso                  = var.linux_iso
 
- vcenter_vmname       = "LHINTZSC-UBUNTU-SERVER"
+ vcenter_vmname       = "LHINTZSC-UBUNTU"
  vcenter_datacenter   = var.datacenter
  vcenter_folder       = vsphere_folder.ise-fmc.path
  vcenter_host         = var.VCENTER_HOST

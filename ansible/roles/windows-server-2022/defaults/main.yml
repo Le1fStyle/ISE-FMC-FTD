@@ -1,16 +1,13 @@
 ---
-ubuntu_from_iso: true
+# flags to control the bahviour of the role
+windows_from_iso:     false
+windows_ad_server:    false
+windows_dns_server:   false
 
-ubuntu_timezone:    "Europe/Vienna"
-ubuntu_hostname:    "{{ inventory_hostname }}"
-ubuntu_ntp_server:  "{{ lookup('env','ANSIBLE_UBUNTU_NTP_SERVER') }}"
-ubuntu_ftp_proxy:   "{{ lookup('env','ANSIBLE_UBUNTU_FTP_PROXY') }}"
-ubuntu_http_proxy:  "{{ lookup('env','ANSIBLE_UBUNTU_HTTP_PROXY') }}"
-ubuntu_https_proxy: "{{ lookup('env','ANSIBLE_UBUNTU_HTTPS_PROXY') }}"
-
-# install from iso fields
+# python interpreter with the correct packages installed
 ansible_python_interpreter: /opt/homebrew/bin/python3
 
+# variables initialized via environment variables
 vcenter:
   host:                   "{{ lookup('env','vcenter_host') }}"
   user:                   "{{ lookup('env','vcenter_user') }}"
@@ -29,13 +26,30 @@ network:
   nameserver:             "{{ lookup('env','network_nameserver') }}"
   proxy:                  "{{ lookup('env','network_proxy') }}"
 installer:
+  product_key:            "{{ lookup('env','product_key') }}"
   hostname:               "{{ lookup('env','installer_hostname') }}"
-  name:                   "{{ lookup('env','installer_name') }}"
+  name:                   "{{ lookup('env','installer_username') }}"
   user:                   "{{ lookup('env','installer_user') }}"
   pwd:                    "{{ lookup('env','installer_pwd') }}"
   time:                   "{{ lookup('env','installer_time') }}"
 
-# module defaults used in main playbook
+# settings for active directory domain controller
+ad:
+  domain: vielab.local
+  pwd: Vielab123!
+
+# settings for DNS server and windows machine as client
+dns:
+  records-a:
+  - { name: "dns",    ip: "10.51.71.46" }
+  - { name: "ubuntu", ip: "10.51.71.47" }
+  servers:
+  - "144.254.71.184"
+  - "171.70.168.183"
+  - "64.104.123.144"
+  - "10.51.71.46"
+
+# ini module defaults
 input_module_defaults:
   vmware_guest_info:
     hostname:               '{{ vcenter.host }}'
