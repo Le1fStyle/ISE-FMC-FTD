@@ -1,12 +1,10 @@
 - name: Gather basic facts about VM
   vmware_guest_info:
-  delegate_to: localhost
   register: vm_facts
 
 - name: Collect details about VM
   vmware.vmware_rest.vcenter_vm_info:
     vm: '{{ vm_facts.instance.moid }}'
-  delegate_to: localhost
   register: vm_details
 
 - name: Wait for boot loader
@@ -22,7 +20,6 @@
       - TAB
       - ENTER
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Wait for installer
@@ -33,7 +30,6 @@
   community.vmware.vmware_guest_sendkey:
     sleep_time: 0
     string_send: "{{ installer.product_key }}"
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Confirm product key
@@ -42,7 +38,6 @@
     keys_send:
       - ENTER
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Wait for installer
@@ -55,7 +50,6 @@
     keys_send:
       - DOWNARROW
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Wait for installer
@@ -68,7 +62,6 @@
     keys_send:
       - SPACE
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Wait for installer
@@ -81,7 +74,6 @@
     keys_send:
       - TAB
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Select disk
@@ -89,7 +81,6 @@
     sleep_time: 1
     keys_send:
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Wait for installer
@@ -100,7 +91,6 @@
   community.vmware.vmware_guest_sendkey:
     sleep_time: 0
     string_send: "{{ installer.pwd }}"
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Next line
@@ -108,14 +98,12 @@
     sleep_time: 1
     keys_send:
       - TAB
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Re-enter password
   community.vmware.vmware_guest_sendkey:
     sleep_time: 0
     string_send: "{{ installer.pwd }}"
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Confirm password
@@ -123,7 +111,6 @@
     sleep_time: 2
     keys_send:
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Wait for installer
@@ -135,7 +122,6 @@
     sleep_time: 2
     keys_send:
       - CTRL_ALT_DEL
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Wait to load
@@ -146,7 +132,6 @@
   community.vmware.vmware_guest_sendkey:
     sleep_time: 0
     string_send: "{{ installer.pwd }}"
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter password
@@ -154,7 +139,6 @@
     sleep_time: 2
     keys_send:
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Wait to load
@@ -166,7 +150,6 @@
     sleep_time: 1
     keys_send:
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Wait to load
@@ -178,7 +161,6 @@
     sleep_time: 0
     keys_send:
       - WINDOWS
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Wait to load
@@ -189,7 +171,6 @@
   community.vmware.vmware_guest_sendkey:
     sleep_time: 0
     string_send: "powershell"
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Wait to load
@@ -201,7 +182,6 @@
     sleep_time: 1
     keys_send:
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Disable notifications step 1
@@ -212,7 +192,6 @@
       -Path "HKCU:\Software\Policies\Microsoft\Windows" 
       -Name "Explorer" 
       -force
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -220,7 +199,6 @@
     sleep_time: 1
     keys_send:
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Disable notifications step 2
@@ -232,7 +210,6 @@
       -Name "DisableNotificationCenter" 
       -PropertyType "DWord" 
       -Value 1
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -240,7 +217,6 @@
     sleep_time: 1
     keys_send:
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Disable notifications step 3
@@ -252,7 +228,6 @@
       -Name "ToastEnabled" 
       -PropertyType "DWord" 
       -Value 0
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -260,14 +235,12 @@
     sleep_time: 1
     keys_send:
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Get adapter
   community.vmware.vmware_guest_sendkey:
     sleep_time: 0
     string_send: '$adapter = Get-NetAdapter | ? {$_.Status -eq "up"}'
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -275,7 +248,6 @@
     sleep_time: 1
     keys_send:
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Remove exsint IP
@@ -287,7 +259,6 @@
       -AddressFamily IPv4
       -Confirm:$false
       }
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -295,7 +266,6 @@
     sleep_time: 1
     keys_send:
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Remove existing gateway
@@ -307,7 +277,6 @@
       -AddressFamily IPv4
       -Confirm:$false
       }
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -315,7 +284,6 @@
     sleep_time: 1
     keys_send:
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Set IP, netmask and gateway
@@ -327,7 +295,6 @@
       -IPAddress {{ network.address }} 
       -PrefixLength {{ network.subnet[-2:] }} 
       -DefaultGateway {{ network.gateway }}
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -335,7 +302,6 @@
     sleep_time: 1
     keys_send:
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Wait to load
@@ -347,7 +313,6 @@
     sleep_time: 1
     keys_send:
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: DNS sever
@@ -356,7 +321,6 @@
     string_send: >-
       $adapter | Set-DnsClientServerAddress 
       -ServerAddresses {{ network.nameserver | replace('[','(') | replace(']',')') }}
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -364,7 +328,6 @@
     sleep_time: 1
     keys_send:
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enable proxy
@@ -374,8 +337,11 @@
       Set-ItemProperty 
       -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings" 
       -Name ProxyEnable -Value 1
-  delegate_to: localhost
   register: keys_num_sent
+
+- name: Wait to load
+  ansible.builtin.pause:
+    seconds: 2
 
 - name: Enter powershell
   community.vmware.vmware_guest_sendkey:
@@ -391,7 +357,6 @@
       -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings" 
       -Name ProxyServer 
       -Value {{ network.proxy | replace("https://","") | replace("http://","") }}
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -410,7 +375,6 @@
       -Protocol ICMPv4 
       -IcmpType 8  
       -Action Allow
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -425,7 +389,6 @@
     string_send: >-
       Configure-SMRemoting.exe
       -enable
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -441,7 +404,6 @@
       Enable-PSRemoting
       -SkipNetworkProfileCheck
       -Force
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -460,7 +422,6 @@
       -Profile Any
       -LocalPort 5986
       -Protocol TCP
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -479,7 +440,6 @@
       -Profile Any
       -LocalPort 5985
       -Protocol TCP
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -498,7 +458,6 @@
       -LocalPort 5985-5986
       -Protocol TCP
       -Action Allow
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -514,7 +473,6 @@
       Set-Item
       -Path WSMan:\localhost\Service\Auth\Basic
       -Value $true
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -530,7 +488,6 @@
       Set-Item
       -Path WSMan:\localhost\Service\Auth\Certificate
       -Value $true
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -544,7 +501,6 @@
     sleep_time: 0
     string_send: >-
       winrm set winrm/config/client '@{AllowUnencrypted ="true"}'
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -558,7 +514,6 @@
     sleep_time: 0
     string_send: >-
       winrm set winrm/config/service '@{AllowUnencrypted ="true"}'
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -572,7 +527,6 @@
     sleep_time: 0
     string_send: >-
       $hostname=hostname.exe;
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -589,7 +543,6 @@
       -dnsname $hostname
       -CertStoreLocation 'Cert:\LocalMachine\My';
       $cert=$cert.Thumbprint
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -612,7 +565,6 @@
       {{ '}}' }}'"
       -f $hostname, $cert; 
       Invoke-Expression $cmd
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -626,7 +578,6 @@
     sleep_time: 0
     string_send: >-
       Set-Item wsman:\localhost\client\trustedhosts * -Force
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -640,7 +591,6 @@
     sleep_time: 0
     string_send: >-
       Enable-WSManCredSSP -Role Server -Force
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -654,7 +604,6 @@
     sleep_time: 0
     string_send: >-
       Restart-Service winrm
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -668,7 +617,6 @@
     sleep_time: 0
     string_send: >-
       Stop-Computer -ComputerName localhost
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter powershell
@@ -689,7 +637,6 @@
         controller_number:  '{{ vcenter.iso_controller_number }}'
         unit_number:        '{{ vcenter.iso_unit_number }}'
         state: present
-  delegate_to: localhost
   register: vm_facts
 
 - name: Wait 3 seconds
@@ -699,7 +646,6 @@
 - name: Power on VM
   vmware_guest:
     state: poweredon
-  delegate_to: localhost
   register: vm_facts
 
 - name: Wait for reboot

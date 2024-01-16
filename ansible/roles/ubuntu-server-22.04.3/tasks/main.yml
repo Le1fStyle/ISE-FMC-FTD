@@ -7,6 +7,7 @@
     vmware_guest: "{{ input_module_defaults.vmware_guest }}"
     vmware.vmware_rest.vcenter_vm_info: "{{ input_module_defaults.vcenter_vm_info }}"
     community.vmware.vmware_guest_sendkey: "{{ input_module_defaults.vmware_guest_sendkey }}"
+  delegate_to: localhost
   when: ubuntu_from_iso == true
 
 - include_tasks: config_settings.yml

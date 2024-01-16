@@ -1,12 +1,10 @@
 - name: Gather basic facts about VM
   vmware_guest_info:
-  delegate_to: localhost
   register: vm_facts
 
 - name: Collect details about VM
   vmware.vmware_rest.vcenter_vm_info:
     vm: '{{ vm_facts.instance.moid }}'
-  delegate_to: localhost
   register: vm_details
 
 - name: Wait for boot loader
@@ -18,7 +16,6 @@
     sleep_time: 1
     keys_send:
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Wait for init process
@@ -32,7 +29,6 @@
       - ENTER
       - ENTER
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Select manual IPv4 config
@@ -48,7 +44,6 @@
       - ENTER
       - DOWNARROW
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter IP subnet xx.xx.xx.xx/yy
@@ -57,7 +52,6 @@
     keys_send:
       - DOWNARROW
     string_send: "{{ network.subnet }}"
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter IP address xx.xx.xx.xx
@@ -66,7 +60,6 @@
     keys_send:
       - DOWNARROW
     string_send: "{{ network.address }}"
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter IP gateway xx.xx.xx.xx
@@ -76,7 +69,6 @@
     keys_send:
       - DOWNARROW
     string_send: "{{ network.gateway }}"
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter nameserver A,B,C
@@ -85,7 +77,6 @@
     keys_send:
       - DOWNARROW
     string_send: "{{ network.nameserver | join(',') | replace(\"'\",'') }}"
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Handle networking screens
@@ -99,14 +90,12 @@
       - DOWNARROW
       - ENTER
       - UPARROW
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter proxy
   community.vmware.vmware_guest_sendkey:
     sleep_time: 0
     string_send: "{{ network.proxy }}"
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Leave proxy screen
@@ -115,7 +104,6 @@
     keys_send:
       - DOWNARROW
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Handle standard screens
@@ -135,14 +123,12 @@
       - ENTER
       - DOWNARROW
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter username
   community.vmware.vmware_guest_sendkey:
     sleep_time: 0
     string_send: "{{ installer.name }}"
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter servername
@@ -151,7 +137,6 @@
     keys_send:
       - DOWNARROW
     string_send: "{{ installer.hostname }}"
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter username
@@ -160,7 +145,6 @@
     keys_send:
       - DOWNARROW
     string_send: "{{ installer.user }}"
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter password
@@ -169,7 +153,6 @@
     keys_send:
       - DOWNARROW
     string_send: "{{ installer.pwd }}"
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Enter password again
@@ -178,7 +161,6 @@
     keys_send:
       - DOWNARROW
     string_send: "{{ installer.pwd }}"
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Handle screens and activate SSH
@@ -192,7 +174,6 @@
       - DOWNARROW
       - DOWNARROW
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: Skip feature server selection
@@ -222,7 +203,6 @@
       - DOWNARROW
       - DOWNARROW
       - ENTER
-  delegate_to: localhost
   register: keys_num_sent
 
 - name: "Wait {{ installer.time}} min for installation to complete"
@@ -232,7 +212,6 @@
 - name: Power off VM
   vmware_guest:
     state: poweredoff
-  delegate_to: localhost
   register: vm_facts
 
 - name: Remove cdrom ISO
@@ -243,11 +222,9 @@
         controller_number:  '{{ vcenter.iso_controller_number }}'
         unit_number:        '{{ vcenter.iso_unit_number }}'
         state: present
-  delegate_to: localhost
   register: vm_facts
 
 - name: Power on VM
   vmware_guest:
     state: poweredon
-  delegate_to: localhost
   register: vm_facts
