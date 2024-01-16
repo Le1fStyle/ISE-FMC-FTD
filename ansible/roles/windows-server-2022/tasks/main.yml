@@ -1,15 +1,15 @@
-#- block:
-#  - include_tasks: install_from_iso.yml
-#  module_defaults:
-#    vmware_guest_info: "{{ input_module_defaults.vmware_guest_info }}"
-#    vmware_guest: "{{ input_module_defaults.vmware_guest }}"
-#    vmware.vmware_rest.vcenter_vm_info: "{{ input_module_defaults.vcenter_vm_info }}"
-#    community.vmware.vmware_guest_sendkey: "{{ input_module_defaults.vmware_guest_sendkey }}"
-#  delegate_to: localhost
-#  when: windows_from_iso == true
+- block:
+  - include_tasks: install_from_iso.yml
+  module_defaults:
+    vmware_guest_info: "{{ input_module_defaults.vmware_guest_info }}"
+    vmware_guest: "{{ input_module_defaults.vmware_guest }}"
+    vmware.vmware_rest.vcenter_vm_info: "{{ input_module_defaults.vcenter_vm_info }}"
+    community.vmware.vmware_guest_sendkey: "{{ input_module_defaults.vmware_guest_sendkey }}"
+  delegate_to: localhost
+  when: windows_from_iso == true
 
-#- include_tasks: install_active_directory.yml
-#  when: windows_ad_server == true
+- include_tasks: install_active_directory.yml
+  when: windows_ad_server == true
 
 - include_tasks: configure_dns_records.yml
   loop: "{{ dns.records_a }}"
