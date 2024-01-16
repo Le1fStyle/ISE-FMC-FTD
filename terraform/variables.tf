@@ -67,7 +67,7 @@ variable "project_folder_name" {
 variable "network_nameserver" {
   description = "list of nameserver"
   type        = list(string)
-  default     = ["144.254.71.184","171.70.168.183","64.104.123.144","10.51.71.46"]
+  default     = ["144.254.71.184","171.70.168.183","64.104.123.144"]
 }
 
 variable "windows_iso" {
