@@ -40,9 +40,9 @@ ad:
 
 # settings for DNS server and windows machine as client
 dns:
-  records-a:
-  - { name: "dns",    ip: "10.51.71.46" }
-  - { name: "ubuntu", ip: "10.51.71.47" }
+  records_a:
+  - { name: "dns",    ip: "10.51.71.46", zone: "{{ ad.domain }}" }
+  - { name: "ubuntu", ip: "10.51.71.47", zone: "{{ ad.domain }}" }
   servers:
   - "144.254.71.184"
   - "171.70.168.183"

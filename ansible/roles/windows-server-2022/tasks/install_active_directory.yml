@@ -7,7 +7,7 @@
   register: result
 
 - name: Create new forest
-  win_domain:
+  microsoft.ad.domain:
     dns_domain_name: "{{ ad.domain }}"
     safe_mode_password: "{{ ad.pwd }}"
   register: result
@@ -16,7 +16,3 @@
   win_reboot:
     msg: "Server config in progress; rebooting..."
   when: result.reboot_required
-
-- name: Wait for reboot
-  ansible.builtin.pause:
-    seconds: 60

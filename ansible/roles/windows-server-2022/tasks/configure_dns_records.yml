@@ -1,13 +1,6 @@
 - name: Create database server record
   community.windows.win_dns_record:
-    name: "ad-dns"
+    name: "{{ item.name }}"
     type: "A"
-    value: "10.51.71.48"
-    zone: "vielab.local"
-
-- name: Create database server record
-  community.windows.win_dns_record:
-    name: "ubuntu-1"
-    type: "A"
-    value: "10.51.71.46"
-    zone: "vielab.local"
+    value: "{{ item.ip }}"
+    zone: "{{ item.zone }}"

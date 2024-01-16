@@ -639,7 +639,7 @@
         state: present
   register: vm_facts
 
-- name: Wait 3 seconds
+- name: Wait 10 seconds
   ansible.builtin.pause:
     seconds: 10
 
@@ -650,4 +650,4 @@
 
 - name: Wait for reboot
   ansible.builtin.pause:
-    seconds: 60
+    seconds: 90
