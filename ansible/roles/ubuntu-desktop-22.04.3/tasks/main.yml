@@ -1,4 +1,0 @@
-#- include_tasks: print_vars.yml
-- include_tasks: config_settings.yml
-- include_tasks: install_packages.yml
-

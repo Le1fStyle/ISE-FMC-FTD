@@ -1,7 +1,0 @@
----
-ubuntu_timezone:    "Europe/Vienna"
-ubuntu_hostname:    "{{ inventory_hostname }}"
-ubuntu_ntp_server:  "{{ lookup('env','ANSIBLE_UBUNTU_NTP_SERVER') }}"
-ubuntu_ftp_proxy:   "{{ lookup('env','ANSIBLE_UBUNTU_FTP_PROXY') }}"
-ubuntu_http_proxy:  "{{ lookup('env','ANSIBLE_UBUNTU_HTTP_PROXY') }}"
-ubuntu_https_proxy: "{{ lookup('env','ANSIBLE_UBUNTU_HTTPS_PROXY') }}"
