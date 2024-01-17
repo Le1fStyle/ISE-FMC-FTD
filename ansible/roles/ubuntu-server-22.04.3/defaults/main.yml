@@ -9,7 +9,7 @@ ubuntu_http_proxy:  "{{ lookup('env','ANSIBLE_UBUNTU_HTTP_PROXY') }}"
 ubuntu_https_proxy: "{{ lookup('env','ANSIBLE_UBUNTU_HTTPS_PROXY') }}"
 
 # install from iso fields
-ansible_python_interpreter: /opt/homebrew/bin/python3
+#ansible_python_interpreter: /opt/homebrew/bin/python3
 
 vcenter:
   host:                   "{{ lookup('env','vcenter_host') }}"

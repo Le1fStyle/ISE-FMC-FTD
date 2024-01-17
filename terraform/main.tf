@@ -116,7 +116,7 @@ module "module_ubuntu_server" {
  network_gateway      = var.NETWORK_GATEWAY
  network_nameserver   = var.network_nameserver
 
- installer_hostname   = "ubuntu-1"
+ installer_hostname   = "ubuntu_1"
  installer_username   = var.LINUX_USERNAME
  installer_usr        = var.LINUX_USR
  installer_pwd        = var.LINUX_PWD
