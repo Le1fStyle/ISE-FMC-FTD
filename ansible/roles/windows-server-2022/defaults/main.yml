@@ -5,7 +5,7 @@ windows_ad_server:    false
 windows_dns_server:   false
 
 # python interpreter with the correct packages installed
-ansible_python_interpreter: /opt/homebrew/bin/python3
+#ansible_python_interpreter: /opt/homebrew/bin/python3
 
 # variables initialized via environment variables
 vcenter:
