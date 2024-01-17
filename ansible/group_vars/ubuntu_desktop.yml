@@ -5,4 +5,4 @@ ansible_ssh_user:       "{{ lookup('env','TF_VAR_LINUX_USR') }}"
 ansible_ssh_pass:       "{{ lookup('env','TF_VAR_LINUX_PWD') }}"
 ansible_become:         yes
 ansible_become_method:  sudo 
-ansible_become_pass:    "{{ lookup('env','TF_VAR_LINUX_USR') }}"
+ansible_become_pass:    "{{ lookup('env','TF_VAR_LINUX_PWD') }}"
