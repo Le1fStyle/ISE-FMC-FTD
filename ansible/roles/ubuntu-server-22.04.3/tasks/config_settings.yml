@@ -18,15 +18,11 @@
   template:
     src: apt.conf.j2
     dest: /etc/apt/apt.conf
-  notify:
-  - Source bashrc
 
 - name: "Copy template /etc/environment"
   template:
     src: environment.j2
     dest: /etc/environment
-  notify:
-  - Source bashrc
   
 - name: "Set timezone {{ ubuntu_timezone }}"
   timezone:
