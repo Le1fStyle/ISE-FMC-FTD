@@ -228,3 +228,7 @@
   vmware_guest:
     state: poweredon
   register: vm_facts
+
+- name: Wait for boot loader
+  ansible.builtin.pause:
+    seconds: 90
