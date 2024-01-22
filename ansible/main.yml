@@ -12,7 +12,7 @@
 
 - name: Setup ubuntu server
   tags: terraform_ubuntu_server
-  hosts: "{{ variable_host | default('ubuntu_1') }}"
+  hosts: "{{ variable_host | default('ubuntu1') }}"
   gather_facts: false
   roles:
   - role: ubuntu-server-22.04.3

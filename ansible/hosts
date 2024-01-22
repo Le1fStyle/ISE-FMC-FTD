@@ -13,7 +13,7 @@ windows_server
 windows_ad_dns ansible_host="{{ lookup('env','TF_VAR_NETWORK_ADDRESS_1') }}"
 
 [ubuntu_desktop]
-ubuntu_1       ansible_host="{{ lookup('env','TF_VAR_NETWORK_ADDRESS_2') }}"
+ubuntu1        ansible_host="{{ lookup('env','TF_VAR_NETWORK_ADDRESS_2') }}"
 
 [orchestrator]
 localhost ansible_connection=local ansible_python_interpreter=/opt/homebrew/bin/python3
