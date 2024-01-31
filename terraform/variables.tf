@@ -25,7 +25,7 @@ variable "datacenter" {
 variable "clustername" {
   description = "Name of cluster"
   type        = string
-  default     = "HX-EDGE-M5"
+  default     = "HX-EDGE"
 }
 
 variable "network_vms" {
